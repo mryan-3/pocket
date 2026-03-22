@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdfdfb;
+  --foreground: #1c1917;
+  --primary: #f59e0b;
+  --primary-foreground: #ffffff;
+  --accent: #fff7ed;
+  --accent-foreground: #9a3412;
+  --card: #ffffff;
+  --card-foreground: #1c1917;
+  --border: #e7e5e4;
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* NO DARK MODE - Light only as requested */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+}
+
+.glass-card {
+  @apply bg-card/80 backdrop-blur-md border border-border;
+}
