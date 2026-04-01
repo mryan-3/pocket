@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ForkKnife, User, Bell, SignOut } from '@phosphor-icons/react';
+import { ForkKnife, User, Bell, SignOut, ShieldCheck } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 
@@ -29,6 +29,12 @@ export default function Navbar() {
           <Link href="/dashboard" className="hover:text-primary transition-colors">
             Dashboard
           </Link>
+          {user?.role === 'admin' && (
+            <Link href="/admin" className="text-primary font-bold flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+              <ShieldCheck size={18} weight="bold" />
+              Admin
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-4">
@@ -41,7 +47,7 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex flex-col items-end">
                 <span className="text-sm font-bold leading-none">{user?.name}</span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">Member</span>
+                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">{user?.role === 'admin' ? 'Admin' : 'Member'}</span>
               </div>
               <button 
                 onClick={() => logout()}

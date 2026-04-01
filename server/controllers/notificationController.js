@@ -1,4 +1,5 @@
 import Notification from '../models/Notification.js';
+import ApiResponse from '../utils/ApiResponse.js';
 
 // 1. Get My Notifications
 export const getMyNotifications = async (req, res) => {
@@ -6,7 +7,7 @@ export const getMyNotifications = async (req, res) => {
     const notifications = await Notification.find({ user: req.user.id })
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ notifications });
+    return res.status(200).json(new ApiResponse(200, notifications));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -21,7 +22,7 @@ export const markAsRead = async (req, res) => {
       { new: true }
     );
     if (!notification) return res.status(404).json({ message: "Notification not found" });
-    res.status(200).json({ message: "Marked as read", notification });
+    return res.status(200).json(new ApiResponse(200, notification, "Marked as read"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -31,7 +32,7 @@ export const markAsRead = async (req, res) => {
 export const markAllAsRead = async (req, res) => {
   try {
     await Notification.updateMany({ user: req.user.id, isRead: false }, { isRead: true });
-    res.status(200).json({ message: "All notifications marked as read" });
+    return res.status(200).json(new ApiResponse(200, null, "All notifications marked as read"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

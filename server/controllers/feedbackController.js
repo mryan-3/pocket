@@ -2,6 +2,7 @@ import Feedback from '../models/Feedback.js'
 import Restaurant from '../models/Restaurant.js'
 import ScheduledVisit from '../models/ScheduledVisit.js'
 import mongoose from 'mongoose'
+import ApiResponse from '../utils/ApiResponse.js'
 
 // 1. Submit Feedback
 export const submitFeedback = async (req, res) => {
@@ -50,12 +51,9 @@ export const submitFeedback = async (req, res) => {
     }
 
     await session.commitTransaction()
-    res
+    return res
       .status(201)
-      .json({
-        message: 'Feedback submitted successfully',
-        feedback: feedback[0],
-      })
+      .json(new ApiResponse(201, feedback[0], 'Feedback submitted successfully'))
   } catch (error) {
     await session.abortTransaction()
     res.status(500).json({ error: error.message })
@@ -73,7 +71,7 @@ export const getRestaurantFeedback = async (req, res) => {
       .populate('user', 'name')
       .sort({ createdAt: -1 })
 
-    res.status(200).json({ feedback })
+    return res.status(200).json(new ApiResponse(200, feedback))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -86,7 +84,7 @@ export const getMyFeedback = async (req, res) => {
       .populate('restaurant', 'name')
       .sort({ createdAt: -1 })
 
-    res.status(200).json({ feedback })
+    return res.status(200).json(new ApiResponse(200, feedback))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -105,7 +103,7 @@ export const deleteFeedback = async (req, res) => {
     // Note: In a real app, we should probably recalculate the restaurant rating here too.
     // But for MVP, let's keep it simple.
 
-    res.status(200).json({ message: 'Feedback deleted successfully' })
+    return res.status(200).json(new ApiResponse(200, null, 'Feedback deleted successfully'))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

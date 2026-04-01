@@ -2,6 +2,7 @@ import User from '../models/User.js'
 import Restaurant from '../models/Restaurant.js'
 import Feedback from '../models/Feedback.js'
 import ScheduledVisit from '../models/ScheduledVisit.js'
+import ApiResponse from '../utils/ApiResponse.js'
 
 // 1. System Stats
 export const getStats = async (req, res) => {
@@ -16,12 +17,12 @@ export const getStats = async (req, res) => {
     ])
     const averageRating = avgRatingData.length > 0 ? avgRatingData[0].avg : 0
 
-    res.status(200).json({
+    return res.status(200).json(new ApiResponse(200, {
       totalUsers,
       totalRestaurants,
       totalFeedback,
       averageRating: Math.round(averageRating * 10) / 10,
-    })
+    }))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -41,9 +42,9 @@ export const getUsers = async (req, res) => {
 
     const total = await User.countDocuments()
 
-    res
+    return res
       .status(200)
-      .json({ data: users, total, page: Number(page), limit: Number(limit) })
+      .json(new ApiResponse(200, { data: users, total, page: Number(page), limit: Number(limit) }))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -64,7 +65,7 @@ export const getUserDetail = async (req, res) => {
       'name',
     )
 
-    res.status(200).json({ user, feedback, visits })
+    return res.status(200).json(new ApiResponse(200, { user, feedback, visits }))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -80,7 +81,7 @@ export const updateUserRole = async (req, res) => {
       { new: true },
     )
     if (!user) return res.status(404).json({ message: 'User not found' })
-    res.status(200).json({ message: 'User role updated', user })
+    return res.status(200).json(new ApiResponse(200, user, 'User role updated'))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -91,7 +92,7 @@ export const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id)
     if (!user) return res.status(404).json({ message: 'User not found' })
-    res.status(200).json({ message: 'User deleted successfully' })
+    return res.status(200).json(new ApiResponse(200, null, 'User deleted successfully'))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -104,7 +105,7 @@ export const getAllFeedback = async (req, res) => {
       .populate('user', 'name')
       .populate('restaurant', 'name')
       .sort({ createdAt: -1 })
-    res.status(200).json({ feedback })
+    return res.status(200).json(new ApiResponse(200, feedback))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -117,7 +118,7 @@ export const getAllVisits = async (req, res) => {
       .populate('user', 'name')
       .populate('restaurant', 'name')
       .sort({ visitDate: -1 })
-    res.status(200).json({ visits })
+    return res.status(200).json(new ApiResponse(200, visits))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

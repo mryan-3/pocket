@@ -1,5 +1,6 @@
 import Restaurant from '../models/Restaurant.js';
 import { scoreRestaurant } from '../utils/rankingEngine.js';
+import ApiResponse from '../utils/ApiResponse.js';
 
 export const getRecommendations = async (req, res) => {
   try {
@@ -31,9 +32,7 @@ export const getRecommendations = async (req, res) => {
     else if (sortBy === 'priceDesc') scoredRestaurants.sort((a, b) => b.priceRange.max - a.priceRange.max);
     else if (sortBy === 'rating') scoredRestaurants.sort((a, b) => b.rating.average - a.rating.average);
 
-    res.status(200).json({
-      data: scoredRestaurants.slice(0, 10) // Return top 10
-    });
+    return res.status(200).json(new ApiResponse(200, scoredRestaurants.slice(0, 10)));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -1,4 +1,5 @@
 import Restaurant from '../models/Restaurant.js';
+import ApiResponse from '../utils/ApiResponse.js';
 
 // 1. List Restaurants with filters
 export const getRestaurants = async (req, res) => {
@@ -41,12 +42,12 @@ export const getRestaurants = async (req, res) => {
 
     const total = await Restaurant.countDocuments(query);
 
-    res.status(200).json({
+    return res.status(200).json(new ApiResponse(200, {
       data: restaurants,
       total,
       page: Number(page),
       limit: Number(limit)
-    });
+    }));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -59,7 +60,7 @@ export const getRestaurantById = async (req, res) => {
     if (!restaurant || !restaurant.isActive) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
-    res.status(200).json({ restaurant });
+    return res.status(200).json(new ApiResponse(200, restaurant));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -70,7 +71,7 @@ export const createRestaurant = async (req, res) => {
   try {
     const restaurantData = { ...req.body, addedBy: req.user.id };
     const restaurant = await Restaurant.create(restaurantData);
-    res.status(201).json({ message: "Restaurant created successfully", restaurant });
+    return res.status(201).json(new ApiResponse(201, restaurant, "Restaurant created successfully"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -85,7 +86,7 @@ export const updateRestaurant = async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!restaurant) return res.status(404).json({ message: "Restaurant not found" });
-    res.status(200).json({ message: "Restaurant updated successfully", restaurant });
+    return res.status(200).json(new ApiResponse(200, restaurant, "Restaurant updated successfully"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -100,7 +101,7 @@ export const deleteRestaurant = async (req, res) => {
       { new: true }
     );
     if (!restaurant) return res.status(404).json({ message: "Restaurant not found" });
-    res.status(200).json({ message: "Restaurant deleted successfully" });
+    return res.status(200).json(new ApiResponse(200, null, "Restaurant deleted successfully"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -115,7 +116,7 @@ export const addMenuItem = async (req, res) => {
     restaurant.menu.push(req.body);
     await restaurant.save();
 
-    res.status(201).json({ message: "Menu item added", restaurant });
+    return res.status(201).json(new ApiResponse(201, restaurant, "Menu item added"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -130,7 +131,7 @@ export const updateMenuItem = async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!restaurant) return res.status(404).json({ message: "Restaurant or menu item not found" });
-    res.status(200).json({ message: "Menu item updated", restaurant });
+    return res.status(200).json(new ApiResponse(200, restaurant, "Menu item updated"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -145,7 +146,7 @@ export const deleteMenuItem = async (req, res) => {
       { new: true }
     );
     if (!restaurant) return res.status(404).json({ message: "Restaurant not found" });
-    res.status(200).json({ message: "Menu item removed", restaurant });
+    return res.status(200).json(new ApiResponse(200, restaurant, "Menu item removed"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

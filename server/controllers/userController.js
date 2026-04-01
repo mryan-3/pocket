@@ -1,13 +1,14 @@
 import User from '../models/User.js';
 import Feedback from '../models/Feedback.js';
 import ScheduledVisit from '../models/ScheduledVisit.js';
+import ApiResponse from '../utils/ApiResponse.js';
 
 // 1. Get Profile
 export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.status(200).json({ user });
+    return res.status(200).json(new ApiResponse(200, user));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -27,10 +28,7 @@ export const updateProfile = async (req, res) => {
 
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
     
-    res.status(200).json({ 
-      message: "Profile updated successfully", 
-      user: updatedUser 
-    });
+    return res.status(200).json(new ApiResponse(200, updatedUser, "Profile updated successfully"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -43,7 +41,7 @@ export const getHistory = async (req, res) => {
       .populate('restaurant', 'name category priceRange rating')
       .sort({ createdAt: -1 });
       
-    res.status(200).json({ feedback });
+    return res.status(200).json(new ApiResponse(200, feedback));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -56,7 +54,7 @@ export const getVisits = async (req, res) => {
       .populate('restaurant', 'name location priceRange rating')
       .sort({ visitDate: -1 });
       
-    res.status(200).json({ visits });
+    return res.status(200).json(new ApiResponse(200, visits));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

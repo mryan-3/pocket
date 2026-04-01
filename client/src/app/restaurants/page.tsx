@@ -17,7 +17,7 @@ export default function RestaurantsPage() {
     queryFn: async () => {
       const p = new URLSearchParams();
       Object.entries({ ...filters, search: debouncedSearch }).forEach(([k, v]) => v && p.append(k, v));
-      return (await apiClient.get(`/restaurants?${p.toString()}`)).data;
+      return (await apiClient.get(`/restaurants?${p.toString()}`)).data.data;
     },
   });
 

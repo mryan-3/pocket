@@ -1,4 +1,5 @@
 import ScheduledVisit from '../models/ScheduledVisit.js';
+import ApiResponse from '../utils/ApiResponse.js';
 
 // 1. Schedule a Visit
 export const scheduleVisit = async (req, res) => {
@@ -12,7 +13,7 @@ export const scheduleVisit = async (req, res) => {
       notes
     });
 
-    res.status(201).json({ message: "Visit scheduled successfully", visit });
+    return res.status(201).json(new ApiResponse(201, visit, "Visit scheduled successfully"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -29,7 +30,7 @@ export const getMyVisits = async (req, res) => {
       .populate('restaurant', 'name location priceRange')
       .sort({ visitDate: -1 });
 
-    res.status(200).json({ visits });
+    return res.status(200).json(new ApiResponse(200, visits));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -43,7 +44,7 @@ export const getVisitById = async (req, res) => {
     
     if (!visit) return res.status(404).json({ message: "Visit not found" });
     
-    res.status(200).json({ visit });
+    return res.status(200).json(new ApiResponse(200, visit));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -60,7 +61,7 @@ export const cancelVisit = async (req, res) => {
 
     if (!visit) return res.status(404).json({ message: "Upcoming visit not found or already cancelled/completed" });
 
-    res.status(200).json({ message: "Visit cancelled successfully", visit });
+    return res.status(200).json(new ApiResponse(200, visit, "Visit cancelled successfully"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

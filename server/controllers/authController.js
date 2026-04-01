@@ -1,5 +1,6 @@
 import User from '../models/User.js'
 import jwt from 'jsonwebtoken'
+import ApiResponse from '../utils/ApiResponse.js'
 
 // Helper to generate tokens
 const generateTokens = (user) => {
@@ -33,9 +34,9 @@ export const register = async (req, res) => {
       password, // Model handles hashing
     })
 
-    res
+    return res
       .status(201)
-      .json({ message: 'User registered successfully', user: newUser })
+      .json(new ApiResponse(201, newUser, 'User registered successfully'))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -74,10 +75,15 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
 
-    res.status(200).json({
-      message: 'Login successful',
-      user: { id: user._id, name: user.name, role: user.role },
-    })
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { id: user._id, name: user.name, role: user.role },
+          'Login successful',
+        ),
+      )
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -92,7 +98,9 @@ export const logout = async (req, res) => {
     }
     res.clearCookie('accessToken')
     res.clearCookie('refreshToken')
-    res.status(200).json({ message: 'Logged out successfully' })
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, 'Logged out successfully'))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -134,7 +142,9 @@ export const refresh = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
 
-      res.status(200).json({ message: 'Token refreshed' })
+      return res
+        .status(200)
+        .json(new ApiResponse(200, null, 'Token refreshed'))
     } catch (err) {
       return res
         .status(403)
@@ -150,14 +160,14 @@ export const me = async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
     if (!user) return res.status(404).json({ message: 'User not found' })
-    res.status(200).json({
-      user: {
+    return res.status(200).json(
+      new ApiResponse(200, {
         id: user._id,
         name: user.name,
         role: user.role,
         email: user.email,
-      },
-    })
+      }),
+    )
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
