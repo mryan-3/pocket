@@ -28,7 +28,7 @@ pocketbite/
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/mryan-3/pocket.git pocketbite
 cd pocketbite
 ```
 
